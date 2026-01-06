@@ -32,7 +32,7 @@ install: venv
 		$(PYTHON) -m pip install --upgrade --target $(LOCAL_PKGS) -r $(REQ); \
 	fi
 
-precommit-install:
+precommit-install: install
 	@echo "Installing pre-commit..."
 	@if [ -d $(VENV_DIR) ]; then \
 		. $(VENV_DIR)/bin/activate && pip install -U pre-commit virtualenv; \
@@ -43,7 +43,7 @@ precommit-install:
 		$(PYTHON) -c "import sys, os, runpy; sys.argv=['pre-commit','install']; sys.path.insert(0, os.path.join(os.getcwd(), '$(LOCAL_PKGS)')); runpy.run_module('pre_commit', run_name='__main__')"; \
 	fi
 
-precommit-run:
+precommit-run: precommit-install
 	@echo "Running pre-commit hooks on all files..."
 	@if [ -d $(VENV_DIR) ]; then \
 		. $(VENV_DIR)/bin/activate && pre-commit run --all-files; \
