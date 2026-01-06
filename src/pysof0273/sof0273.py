@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 """pysof0273.sof0273 - SOF0273 device utilities"""
-import sys
-import threading
 import argparse
 import struct
+import sys
+import threading
+
 import serial
 
 
@@ -11,27 +12,23 @@ class SOF0273:
     """
     Class to configure DOS0157 attenuators
     """
+
     MAGIC_NUMBER = 0xAA55
     READ_CODE = 0x01
     WRITE_CODE = 0x02
     SAVE_CODE = 0x08
-    FRM = {READ_CODE: {'CMD': '>HBH',
-                       'ACK': '>HBBBH',
-                       'TYPE_str': "Read"},
-           WRITE_CODE: {'CMD': '>HBBBH',
-                        'ACK': '>HBBBH',
-                        'TYPE_str': "Write"},
-           SAVE_CODE: {'CMD': '>HBH',
-                       'ACK': '>HBBBH',
-                       'TYPE_str': "Save"},
-           }
+    FRM = {
+        READ_CODE: {"CMD": ">HBH", "ACK": ">HBBBH", "TYPE_str": "Read"},
+        WRITE_CODE: {"CMD": ">HBBBH", "ACK": ">HBBBH", "TYPE_str": "Write"},
+        SAVE_CODE: {"CMD": ">HBH", "ACK": ">HBBBH", "TYPE_str": "Save"},
+    }
     FRM_MAX_LEN = 10
 
-    def __init__(self, port, baudrate=9600, parity='N', stopbits=1):
+    def __init__(self, port, baudrate=9600, parity="N", stopbits=1):
         self.port = port
         self.baudrate = baudrate
         # parity: one of 'N','E','O','M','S' (None, Even, Odd, Mark, Space)
-        self.parity = (parity or 'N').upper()
+        self.parity = (parity or "N").upper()
         # stopbits: 1, 1.5 or 2
         try:
             self.stopbits = float(stopbits)
@@ -75,43 +72,43 @@ class SOF0273:
     def encode_protocol(self, command: str) -> bytes:
         """Dedicated function for protocol encoding."""
         match command[0].lower():
-            case 'r':
+            case "r":
                 code = self.READ_CODE
                 args = ()
-            
-            case 'w':
+
+            case "w":
                 code = self.WRITE_CODE
                 args = command.split()
                 if len(args) != 3:
-                    print("Write command requires 2 arguments: Att_LOFAR and Att_NenuFAR.", file=sys.stderr)
+                    print(
+                        "Write command requires 2 arguments: Att_LOFAR and Att_NenuFAR.",
+                        file=sys.stderr,
+                    )
                     return b""
                 try:
                     Att_LOFAR = self.att_2_code(float(args[1]))
                     Att_NenuFAR = self.att_2_code(float(args[2]))
                 except ValueError:
-                    print("Att_LOFAR and Att_NenuFAR must be floats between 0.0 and 31.5 dB.", file=sys.stderr)
+                    print(
+                        "Att_LOFAR and Att_NenuFAR must be floats between 0.0 and 31.5 dB.",
+                        file=sys.stderr,
+                    )
                     return b""
                 args = (Att_LOFAR, Att_NenuFAR)
 
-            case 's':
+            case "s":
                 code = self.SAVE_CODE
                 args = ()
 
             case _:
                 print("Unknown command. Use 'r', 'w', or 's'.", file=sys.stderr)
                 return b""
-        
-        frame = struct.pack(self.FRM[code]['CMD'],
-                            self.MAGIC_NUMBER,
-                            code,
-                            *args,
-                            0)  # Placeholder for CRC
-        crc = self.calcul_crc_16(frame, len(frame)-2)
-        frame = struct.pack(self.FRM[code]['CMD'],
-                            self.MAGIC_NUMBER,
-                            code,
-                            *args,
-                            crc)
+
+        frame = struct.pack(
+            self.FRM[code]["CMD"], self.MAGIC_NUMBER, code, *args, 0
+        )  # Placeholder for CRC
+        crc = self.calcul_crc_16(frame, len(frame) - 2)
+        frame = struct.pack(self.FRM[code]["CMD"], self.MAGIC_NUMBER, code, *args, crc)
         return frame
 
     def decode_protocol(self, frame: bytes) -> str:
@@ -119,19 +116,24 @@ class SOF0273:
         try:
             if len(frame) < 4:
                 return "Incomplete data received."
-            magic, code = struct.unpack('>HB', frame[:3])
+            magic, code = struct.unpack(">HB", frame[:3])
             if magic != self.MAGIC_NUMBER:
                 return "Invalid magic number."
             if code not in self.FRM.keys():
                 return "Unknown response code."
             else:
-                _, _, att_lofar_code, att_nenufar_code, received_crc = struct.unpack(self.FRM[code]['ACK'], frame)
+                _, _, att_lofar_code, att_nenufar_code, received_crc = struct.unpack(
+                    self.FRM[code]["ACK"], frame
+                )
                 att_lofar = self.code_2_att(att_lofar_code)
                 att_nenufar = self.code_2_att(att_nenufar_code)
                 # Check CRC
-                calculated_crc = self.calcul_crc_16(frame, len(frame)-2)
+                calculated_crc = self.calcul_crc_16(frame, len(frame) - 2)
                 if calculated_crc != received_crc:
-                    print(f"CRC check failed : received {received_crc}, computed {calculated_crc}", file=sys.stderr)
+                    print(
+                        f"CRC check failed : received {received_crc}, computed {calculated_crc}",
+                        file=sys.stderr,
+                    )
                     raise ValueError
                 return f"{self.FRM[code]['TYPE_str']} Ack - Att_LOFAR: {att_lofar} dB, Att_NenuFAR: {att_nenufar} dB\n"
         except Exception:
@@ -158,11 +160,11 @@ class SOF0273:
         try:
             # Map parity and stopbits to pyserial constants with validation
             parity_map = {
-                'N': serial.PARITY_NONE,
-                'E': serial.PARITY_EVEN,
-                'O': serial.PARITY_ODD,
-                'M': serial.PARITY_MARK,
-                'S': serial.PARITY_SPACE,
+                "N": serial.PARITY_NONE,
+                "E": serial.PARITY_EVEN,
+                "O": serial.PARITY_ODD,
+                "M": serial.PARITY_MARK,
+                "S": serial.PARITY_SPACE,
             }
             stopbits_map = {
                 1.0: serial.STOPBITS_ONE,
@@ -172,11 +174,17 @@ class SOF0273:
 
             parity_val = parity_map.get(self.parity, serial.PARITY_NONE)
             if self.parity not in parity_map:
-                print(f"Warning: unknown parity '{self.parity}', defaulting to 'N'", file=sys.stderr)
+                print(
+                    f"Warning: unknown parity '{self.parity}', defaulting to 'N'",
+                    file=sys.stderr,
+                )
 
             stopbits_val = stopbits_map.get(self.stopbits, serial.STOPBITS_ONE)
             if self.stopbits not in stopbits_map:
-                print(f"Warning: unknown stopbits '{self.stopbits}', defaulting to 1", file=sys.stderr)
+                print(
+                    f"Warning: unknown stopbits '{self.stopbits}', defaulting to 1",
+                    file=sys.stderr,
+                )
 
             self.serial_connection = serial.Serial(
                 self.port,
@@ -186,8 +194,10 @@ class SOF0273:
                 timeout=0.1,
             )
             self.running = True
-            print(f"Connected to {self.port} at {self.baudrate} baud."
-                  f" Parity={self.parity} Stopbits={self.stopbits}")
+            print(
+                f"Connected to {self.port} at {self.baudrate} baud."
+                f" Parity={self.parity} Stopbits={self.stopbits}"
+            )
             print("Type 'quit' to exit.\n")
 
             # Start the reading thread
@@ -208,10 +218,10 @@ class SOF0273:
                     continue
 
                 # Ignore comment lines starting with '#', allow leading whitespace
-                if cmd.lstrip().startswith('#'):
+                if cmd.lstrip().startswith("#"):
                     continue
 
-                if cmd.lower() in ('quit', 'exit', 'q'):
+                if cmd.lower() in ("quit", "exit", "q"):
                     break
 
                 payload = self.encode_protocol(cmd)
@@ -228,17 +238,31 @@ class SOF0273:
             print("Connection closed.", file=sys.stderr)
 
 
-
 def main():
     parser = argparse.ArgumentParser(description="Serial port communication tool.")
-    parser.add_argument("--port", type=str, default='/dev/ttyUSB0',
-                        help="Serial port (e.g. /dev/ttyUSB0 or COM3)")
-    parser.add_argument("--baudrate", type=int, default=9600,
-                        help="Baud rate (default: 9600)")
-    parser.add_argument("--parity", type=str, default='N', choices=['N', 'E', 'O', 'M', 'S'],
-                        help="Parity: N (none), E (even), O (odd), M (mark), S (space). Default: N")
-    parser.add_argument("--stopbits", type=float, default=1.0, choices=[1, 1.5, 2],
-                        help="Number of stop bits: 1, 1.5 or 2. Default: 1")
+    parser.add_argument(
+        "--port",
+        type=str,
+        default="/dev/ttyUSB0",
+        help="Serial port (e.g. /dev/ttyUSB0 or COM3)",
+    )
+    parser.add_argument(
+        "--baudrate", type=int, default=9600, help="Baud rate (default: 9600)"
+    )
+    parser.add_argument(
+        "--parity",
+        type=str,
+        default="N",
+        choices=["N", "E", "O", "M", "S"],
+        help="Parity: N (none), E (even), O (odd), M (mark), S (space). Default: N",
+    )
+    parser.add_argument(
+        "--stopbits",
+        type=float,
+        default=1.0,
+        choices=[1, 1.5, 2],
+        help="Number of stop bits: 1, 1.5 or 2. Default: 1",
+    )
     args = parser.parse_args()
 
     app = SOF0273(args.port, args.baudrate, parity=args.parity, stopbits=args.stopbits)
