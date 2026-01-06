@@ -59,6 +59,26 @@ Use the Makefile targets:
 
 On GitLab, the pipeline runs `make ci` and collects `report.xml` as the JUnit report.
 
+Pre-commit hooks
+
+We use `pre-commit` to run fast linters and also to run the test suite on commits. To set it up locally:
+
+```bash
+# install the tool (preferably in your venv)
+python3 -m pip install --user pre-commit
+# install the git hooks in .git/hooks/pre-commit
+pre-commit install
+# run all hooks on all files (useful right after adding the config)
+pre-commit run --all-files
+```
+
+There are Makefile helpers:
+
+- `make precommit-install` — install `pre-commit` and register git hooks
+- `make precommit-run` — run the hooks on all files locally
+
+The GitLab pipeline also runs `pre-commit` in its own job before running the tests.
+
 
 ***
 

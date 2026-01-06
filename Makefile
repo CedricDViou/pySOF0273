@@ -3,6 +3,8 @@
 #   make venv       -> create virtualenv .venv (if venv available)
 #   make install    -> install requirements (venv or local fallback)
 #   make test       -> run tests (using venv pytest or local fallback)
+#   make precommit-install -> install pre-commit locally or in venv
+#   make precommit-run     -> run pre-commit hooks on all files
 #   make clean      -> remove virtualenv, local packages and caches
 #   make clean-all  -> remove more artifacts
 
@@ -11,11 +13,11 @@ VENV_DIR := .venv
 LOCAL_PKGS := .local_packages
 REQ := requirements.txt
 
-.PHONY: help venv install test clean clean-all
+.PHONY: help venv install test precommit-install precommit-run clean clean-all
 
 help:
 	@echo "Usage: make <target>"
-	@echo "Targets: venv install test clean clean-all"
+	@echo "Targets: venv install test precommit-install precommit-run clean clean-all"
 
 venv:
 	@echo "Creating virtual environment if possible..."
@@ -28,6 +30,25 @@ install: venv
 		$(VENV_DIR)/bin/pip install -r $(REQ); \
 	else \
 		$(PYTHON) -m pip install --upgrade --target $(LOCAL_PKGS) -r $(REQ); \
+	fi
+
+precommit-install:
+	@echo "Installing pre-commit..."
+	@if [ -d $(VENV_DIR) ]; then \
+		. $(VENV_DIR)/bin/activate && pip install -U pre-commit virtualenv; \
+		. $(VENV_DIR)/bin/activate && pre-commit install; \
+	else \
+		$(PYTHON) -m pip install --upgrade virtualenv; \
+		$(PYTHON) -m pip install --upgrade --target $(LOCAL_PKGS) pre-commit; \
+		$(PYTHON) -c "import sys, os, runpy; sys.argv=['pre-commit','install']; sys.path.insert(0, os.path.join(os.getcwd(), '$(LOCAL_PKGS)')); runpy.run_module('pre_commit', run_name='__main__')"; \
+	fi
+
+precommit-run:
+	@echo "Running pre-commit hooks on all files..."
+	@if [ -d $(VENV_DIR) ]; then \
+		. $(VENV_DIR)/bin/activate && pre-commit run --all-files; \
+	else \
+		$(PYTHON) -c "import sys, os, runpy; sys.argv=['pre-commit','run','--all-files']; sys.path.insert(0, os.path.join(os.getcwd(), '$(LOCAL_PKGS)')); runpy.run_module('pre_commit', run_name='__main__')"; \
 	fi
 
 test:

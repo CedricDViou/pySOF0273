@@ -18,6 +18,15 @@ secret_detection:
   stage: secret-detection
 
 # Unit tests job using project's Makefile 'ci' target
+precommit:
+  stage: test
+  image: python:3.12
+  before_script:
+    - python -m pip install --upgrade pip
+    - python -m pip install pre-commit
+  script:
+    - pre-commit run --all-files
+
 pytest:
   stage: test
   image: python:3.12
