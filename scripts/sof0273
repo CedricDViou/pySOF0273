@@ -4,7 +4,8 @@ set -euo pipefail
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 PYTHON=${PYTHON:-python3}
 
-# Ensure src is on PYTHONPATH so module SOF0273 can be imported with "python -m SOF0273"
+# Ensure src is on PYTHONPATH so package can be found
 export PYTHONPATH="$ROOT_DIR/src:${PYTHONPATH:-}"
 
-exec "$PYTHON" -m SOF0273 "$@"
+# Run module entrypoint
+exec "$PYTHON" -m pysof0273.sof0273 "$@"

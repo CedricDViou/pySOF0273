@@ -42,6 +42,24 @@ Use the built-in continuous integration in GitLab.
 * [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/ee/user/clusters/agent/)
 * [Set up protected environments](https://docs.gitlab.com/ee/ci/environments/protected_environments.html)
 
+### CI and running tests locally
+
+We provide a simple Makefile to run the test suite locally or in CI.
+
+Project layout
+
+- Source files live in `src/` (add `src/` to `PYTHONPATH` when running Python tools).
+- Executable wrapper `scripts/sof0273` runs the CLI (sets `PYTHONPATH` to include `src/`).
+
+Use the Makefile targets:
+
+- `make install` — install test dependencies into a local virtualenv `.venv` (or fallback to `./.local_packages`).
+- `make test` — run the test suite.
+- `make ci` — runs tests and writes a JUnit XML report to `report.xml` (used by GitLab CI).
+
+On GitLab, the pipeline runs `make ci` and collects `report.xml` as the JUnit report.
+
+
 ***
 
 # Editing this README

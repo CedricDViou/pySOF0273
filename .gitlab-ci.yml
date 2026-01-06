@@ -16,3 +16,16 @@ variables:
   SECRET_DETECTION_ENABLED: 'true'
 secret_detection:
   stage: secret-detection
+
+# Unit tests job using project's Makefile 'ci' target
+pytest:
+  stage: test
+  image: python:3.12
+  script:
+    - make ci
+  artifacts:
+    when: always
+    reports:
+      junit: report.xml
+    paths:
+      - report.xml

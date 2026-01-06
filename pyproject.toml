@@ -1,0 +1,14 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pysof0273"
+version = "0.0.0"
+description = "Utilities to interact with SOF0273 attenuator device"
+readme = "README.md"
+requires-python = ">=3.8"
+license = {text = "MIT"}
+
+[project.scripts]
+sof0273 = "pysof0273.sof0273:main"
