@@ -50,7 +50,7 @@ Type 'quit' to exit.
 ```
 
 
-### CI and running tests locally
+## CI and running tests locally
 
 We provide a simple Makefile to run the test suite locally or in CI.
 
@@ -87,6 +87,12 @@ There are Makefile helpers:
 
 The GitLab pipeline also runs `pre-commit` in its own job before running the tests.
 
+
+## CI, Runners and pipelines
+
+A GitLab Runner is required to pick up and execute CI/CD jobs after commits.
+
+Once installed with `gitlab-runner register ....`, start local instance with `gitlab-runner run`.
 
 ***
 
