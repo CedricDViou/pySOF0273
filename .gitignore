@@ -5,4 +5,5 @@ report.xml
 .ruff_cache
 .venv
 builds
+build
 *.egg-info
