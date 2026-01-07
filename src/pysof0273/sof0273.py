@@ -198,6 +198,13 @@ class SOF0273:
                 f"Connected to {self.port} at {self.baudrate} baud."
                 f" Parity={self.parity} Stopbits={self.stopbits}"
             )
+            print(
+                "Enter commands to send to the device."
+                "Commands:\n"
+                "  r                           - Read current attenuation settings\n"
+                "  w <Att_LOFAR> <Att_NenuFAR> - Set attenuation in dB (0.0 to 31.5)\n"
+                "  s                           - Save current settings to device memory\n"
+            )
             print("Type 'quit' to exit.\n")
 
             # Start the reading thread
