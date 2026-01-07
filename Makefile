@@ -69,11 +69,13 @@ ci: install
 
 clean:
 	@echo "Cleaning common temporary files..."
-	rm -rf $(VENV_DIR) $(LOCAL_PKGS) .pytest_cache build dist
+	rm -rf $(VENV_DIR) $(LOCAL_PKGS) .pytest_cache build builds dist || true
 	find . -type d -name '__pycache__' -exec rm -rf {} + || true
 	rm -rf **/*.pyc || true
+	rm -rf **/*.egg-info || true
+	
 
 clean-all: clean
 	@echo "Cleaning additional artifacts (if any)..."
-	-rm -rf .mypy_cache .coverage htmlcov
+	-rm -rf .mypy_cache .coverage htmlcov .ruff_cache report.xml || true
 	@echo "Done."
