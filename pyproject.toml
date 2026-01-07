@@ -10,5 +10,20 @@ readme = "README.md"
 requires-python = ">=3.8"
 license = {text = "MIT"}
 
+# runtime dependencies required for normal operation
+dependencies = [
+    "pyserial>=3.0,<4.0",
+]
+
+[project.optional-dependencies]
+# developer extras can be installed with `pip install .[dev]`
+dev = [
+    "pytest>=7.0,<8.0",
+    "pre-commit",
+    "black",
+    "isort",
+    "ruff",
+]
+
 [project.scripts]
 sof0273 = "pysof0273.sof0273:main"
