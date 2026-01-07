@@ -4,3 +4,5 @@ report.xml
 .pytest_cache
 .ruff_cache
 .venv
+builds
+*.egg-info
