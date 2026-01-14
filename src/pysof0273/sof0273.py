@@ -3,7 +3,7 @@
 """
 pysof0273.sof0273 - SOF0273 device utilities
 
-Copyright (c) 2026 Cedric Viou
+Copyright (c) 2026 Observatoire Radioastronomique de Nançay
 Licensed under the GNU Lesser General Public License v3.0 or later. See the project LICENSE file for details.
 SPDX-License-Identifier: LGPL-3.0-or-later
 """

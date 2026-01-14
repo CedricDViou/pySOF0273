@@ -1,9 +1,9 @@
 Authors
 =======
 
-- Cedric Viou <cedric.viou@obs-nancay.fr> — Maintainer
+- Cedric Viou <cedric.viou@obs-nancay.fr> — Maintainer — Ingénieur de Recherche à l'Observatoire Radioastronomique de Nançay, Observatoire de Paris, Université PSL, CNRS, Univ Orléans
 
-Copyright (c) 2026 Cedric Viou
+Copyright (c) 2026 Observatoire Radioastronomique de Nançay
 
 Contact: cedric.viou@obs-nancay.fr
 

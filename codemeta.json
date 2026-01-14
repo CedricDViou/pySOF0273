@@ -1,0 +1,37 @@
+{
+    "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
+    "type": "SoftwareSourceCode",
+    "author": [
+        {
+            "id": "https://orcid.org/0000-0002-4706-5202",
+            "type": "Person",
+            "affiliation": {
+                "type": "Organization",
+                "name": "Observatoire Radioastronomique de Nançay, Observatoire de Paris, Université PSL, CNRS, Univ Orléans, 18330 Nançay, France"
+            },
+            "email": "cedric.viou@obs-nancay.fr",
+            "familyName": "Viou",
+            "givenName": "Cedric"
+        },
+        {
+            "type": "schema:Role",
+            "schema:author": "https://orcid.org/0000-0002-4706-5202",
+            "schema:roleName": "Maintainer"
+        }
+    ],
+    "codeRepository": "https://github.com/CedricDViou/pySOF0273.git",
+    "datePublished": "2026-01-14",
+    "description": "Utilities to interact with SOF0273 attenuator device",
+    "keywords": [
+        "attenuator",
+        "serial",
+        "AMG",
+        "SOF0273",
+        "NenuFAR"
+    ],
+    "name": "pysof0273",
+    "programmingLanguage": "Python",
+    "softwareRequirements": [],
+    "version": "0.0.0",
+    "issueTracker": "https://github.com/CedricDViou/pySOF0273/issues"
+}
