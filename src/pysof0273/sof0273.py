@@ -1,5 +1,12 @@
 #!/usr/bin/env python3
-"""pysof0273.sof0273 - SOF0273 device utilities"""
+# -*- coding: utf-8 -*-
+"""
+pysof0273.sof0273 - SOF0273 device utilities
+
+Copyright (c) 2026 Cedric Viou
+Licensed under the GNU Lesser General Public License v3.0 or later. See the project LICENSE file for details.
+SPDX-License-Identifier: LGPL-3.0-or-later
+"""
 import argparse
 import struct
 import sys
